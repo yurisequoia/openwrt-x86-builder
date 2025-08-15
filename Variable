@@ -1,0 +1,3 @@
+ROOTFS_PARTSIZE="1000"
+FILES="files"
+PACKAGES="adguardhome bash bind-dig btop curl ddns-scripts ddns-scripts-cloudflare ethtool fdisk htop intel-microcode kmod-itco-wdt lm-sensors lscpu luci luci-app-ddns luci-app-nlbwmon luci-app-sqm nano netdata parted pciutils smartmontools sqm-scripts usbutils vim-full wget"

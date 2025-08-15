@@ -1,0 +1,81 @@
+name: Build OpenWrt Image
+on:
+  push:
+    branches: ["master"]
+  # pull_request:
+  #   branches: ["master"]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Load build variables
+        id: vars
+        run: |
+          source Variable
+          echo "PACKAGES=$PACKAGES" >> $GITHUB_ENV
+          echo "FILES=$FILES" >> $GITHUB_ENV
+          echo "ROOTFS_PARTSIZE=$ROOTFS_PARTSIZE" >> $GITHUB_ENV
+          BRANCH=$(head -n1 openwrt_branch | tr -d '\r\n')
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          echo "DATE=$(TZ=Asia/Shanghai date +'%Y%m%d')" >> $GITHUB_ENV
+          echo "TIME=$(TZ=Asia/Shanghai date +'%H%M')" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential clang flex bison g++ gawk \
+          gcc-multilib g++-multilib gettext git libncurses5-dev libssl-dev \
+          python3-setuptools rsync swig unzip zlib1g-dev file wget
+
+      - name: Download and extract OpenWrt ImageBuilder
+        run: |
+          IMAGEBUILDER_TAR="openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64.tar.zst"
+          wget -nv "https://downloads.openwrt.org/releases/${BRANCH}/targets/x86/64/${IMAGEBUILDER_TAR}"
+          tar --zstd -xf "$IMAGEBUILDER_TAR"
+
+      - name: Copy files directory into ImageBuilder folder
+        run: |
+          cp -r files "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64/files"
+
+      - name: Build OpenWrt image
+        run: |
+          cd "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64"
+          make image PACKAGES="${PACKAGES}" FILES="${FILES}" ROOTFS_PARTSIZE="${ROOTFS_PARTSIZE}"
+          echo "OUTPUT_IMG=${GITHUB_WORKSPACE}/openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64/build_dir/target-x86_64_musl/linux-x86_64/tmp/openwrt-${BRANCH}-x86-64-generic-squashfs-combined-efi.img.gz" >> $GITHUB_ENV
+
+      - name: Upload dated release
+        uses: softprops/action-gh-release@v2
+        with:
+          # tag_name: ${{ env.BRANCH }}-${{ env.DATE }}
+          tag_name: ${{ env.BRANCH }}-${{ env.DATE }}-${{ env.TIME }}
+          name: OpenWrt ${{ env.BRANCH }} build ${{ env.DATE }}${{ env.TIME }}
+          body: |
+            OpenWrt ImageBuilder auto-build for branch `${{ env.BRANCH }}`
+            Build date: `${{ env.DATE }} ${{ env.TIME }}`
+          files: ${{ env.OUTPUT_IMG }}
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Upload latest release (update tag)
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: latest
+      #     name: OpenWrt ${{ env.BRANCH }} latest build ${{ env.DATE }}
+      #     body: |
+      #       Latest OpenWrt ImageBuilder auto-build for branch `${{ env.BRANCH }}`
+      #       Build date: `${{ env.DATE }}`
+      #     files: ${{ env.OUTPUT_IMG }}
+      #     make_latest: true
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
