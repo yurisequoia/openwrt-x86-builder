@@ -1,4 +1,4 @@
-PACKAGE="wpad dawn luci-app-dawn luci-i18n-base-zh-cn luci-i18n-package-manager-zh-cn nano -wpad-basic-mbedtls"
+PACKAGE="wpad dawn luci-app-dawn vi -wpad-basic-mbedtls"
 
 
 uci-default: sed -i 's/downloads.openwrt.org/mirrors.ustc.edu.cn\/openwrt/g' /etc/opkg/distfeeds.conf
