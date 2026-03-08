@@ -1,5 +1,5 @@
 PACKAGE:
-luci-i18n-package-manager-zh-cn luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn wpad dawn luci-app-dawn nano -wpad-basic-mbedtls
+luci-i18n-package-manager-zh-cn luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn wpad dawn luci-app-dawn nano -wpad-basic-mbedtls libustream-openssl ca-bundle ca-certificates
 
 uci-default:
-sed -i 's/downloads.openwrt.org/mirrors.ustc.edu.cn\/openwrt/g' /etc/opkg/distfeeds.conf
+sed -i 's_https\?://downloads.openwrt.org_https://mirrors.tuna.tsinghua.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
