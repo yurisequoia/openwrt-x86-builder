@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -66,16 +66,3 @@ jobs:
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Upload latest release (update tag)
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     tag_name: latest
-      #     name: OpenWrt ${{ env.BRANCH }} latest build ${{ env.DATE }}
-      #     body: |
-      #       Latest OpenWrt ImageBuilder auto-build for branch `${{ env.BRANCH }}`
-      #       Build date: `${{ env.DATE }}`
-      #     files: ${{ env.OUTPUT_IMG }}
-      #     make_latest: true
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
