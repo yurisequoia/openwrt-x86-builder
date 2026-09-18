@@ -1,1 +1,2 @@
 sed -i 's/downloads.openwrt.org/mirrors.ustc.edu.cn\/openwrt/g' /etc/apk/repositories.d/distfeeds.list
+wget -O /root/.zshrc https://grml.org/console/zshrc
