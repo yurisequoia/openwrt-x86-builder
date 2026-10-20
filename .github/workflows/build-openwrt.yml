@@ -47,10 +47,15 @@ jobs:
         run: |
           cp -r files "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64/files"
 
+      - name: Configure snapshot package repository
+        run: |
+          cd "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64"
+          cat files/etc/apk/repositories.d/customfeeds.list >> repositories
+
       - name: Build OpenWrt image
         run: |
           cd "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64"
-          make image PACKAGES="${PACKAGES}" FILES="${FILES}" ROOTFS_PARTSIZE="${ROOTFS_PARTSIZE}"
+          make image PACKAGES="${PACKAGES}" FILES="${FILES}" ROOTFS_PARTSIZE="${ROOTFS_PARTSIZE}" CONFIG_SIGNATURE_CHECK=
           echo "OUTPUT_IMG=${GITHUB_WORKSPACE}/openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64/build_dir/target-x86_64_musl/linux-x86_64/tmp/openwrt-${BRANCH}-x86-64-generic-squashfs-combined-efi.img.gz" >> $GITHUB_ENV
 
       - name: Upload dated release
