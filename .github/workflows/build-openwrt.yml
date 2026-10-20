@@ -59,7 +59,7 @@ jobs:
           echo "OUTPUT_IMG=${GITHUB_WORKSPACE}/openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64/build_dir/target-x86_64_musl/linux-x86_64/tmp/openwrt-${BRANCH}-x86-64-generic-squashfs-combined-efi.img.gz" >> $GITHUB_ENV
 
       - name: Upload dated release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           # tag_name: ${{ env.BRANCH }}-${{ env.DATE }}
           tag_name: ${{ env.BRANCH }}-${{ env.DATE }}-${{ env.TIME }}
