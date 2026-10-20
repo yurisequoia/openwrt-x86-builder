@@ -47,9 +47,12 @@ jobs:
         run: |
           cp -r files "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64/files"
 
-      - name: Build OpenWrt image
+      - name: Build only squashfs EFI image
         run: |
           cd "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64"
+          # Disable BIOS images and ext4 rootfs to only produce squashfs-combined-efi
+          sed -i 's/CONFIG_GRUB_IMAGES=y/# CONFIG_GRUB_IMAGES is not set/' .config
+          sed -i 's/CONFIG_TARGET_ROOTFS_EXT4=y/# CONFIG_TARGET_ROOTFS_EXT4 is not set/' .config
           make image PACKAGES="${PACKAGES}" FILES="${FILES}" ROOTFS_PARTSIZE="${ROOTFS_PARTSIZE}"
           echo "OUTPUT_IMG=${GITHUB_WORKSPACE}/openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64/build_dir/target-x86_64_musl/linux-x86_64/tmp/openwrt-${BRANCH}-x86-64-generic-squashfs-combined-efi.img.gz" >> $GITHUB_ENV
 
