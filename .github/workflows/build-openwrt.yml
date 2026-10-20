@@ -47,14 +47,6 @@ jobs:
         run: |
           cp -r files "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64/files"
 
-      - name: Configure snapshot package repository
-        run: |
-          cd "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64"
-          cat files/etc/apk/repositories.d/customfeeds.list >> repositories
-          # The image target clears MAKEFLAGS before invoking the package installer.
-          sed -i '/^CONFIG_SIGNATURE_CHECK=/d; /^# CONFIG_SIGNATURE_CHECK is not set$/d' .config
-          printf '\n# CONFIG_SIGNATURE_CHECK is not set\n' >> .config
-
       - name: Build OpenWrt image
         run: |
           cd "openwrt-imagebuilder-${BRANCH}-x86-64.Linux-x86_64"
